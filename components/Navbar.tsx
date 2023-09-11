@@ -3,11 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { Component } from 'react';
 import AuthProviders from './AuthProvider';
+import { getCurrentUser } from '@/lib/session';
 
 
 
-function Navbar() {
-    const session=null
+const Navbar = async () => {
+    const session = await getCurrentUser();
     return (
         <div>
             <nav className='flexBetween navbar'>
@@ -32,15 +33,21 @@ function Navbar() {
                 </div>
 
                 <div className='flexCenter gap-4'>
-                        {session ? (
-                            <>
-                            UserPhoto
+                    {session?.user ? (
+                        <>
+                            {/* {session.user.image && <Image src={session.user.image}
+                                width={40}
+                                height={40}
+                                alt='image'
+                                className='rounded-full'
+                            />
+                            } */}
                             <Link href="/creat-project"> Share Work</Link>
-                            </>
-                        )
-                    :(
-                      <AuthProviders />
-                    )}
+                        </>
+                    )
+                        : (
+                            <AuthProviders />
+                        )}
                 </div>
             </nav>
         </div>
