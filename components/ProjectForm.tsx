@@ -1,7 +1,11 @@
 'use client'
 import { SessionInterface } from '@/common.types'
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { FormField } from './FormField'
+import { categoryFilters } from '@/app/constants'
+import { CustomMenu } from './CustomMenu'
+import Image from 'next/image'
+import { Button } from './Button'
 
 type Props = {
     type: string,
@@ -17,23 +21,49 @@ export const ProjectForm = ({ type, session }: Props) => {
     }
 
     const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+
+        const file = e.target.files?.[0]
+
+        console.log(file)
+        if (!file) return;
+
+
+        if (!file.type.includes('image')) {
+            return alert("Upload Image");
+
+        }
+
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+
+        reader.onload = () => {
+            const result = reader.result as string;
+
+            handleStateChange('image', result)
+        }
 
     }
 
     const handleStateChange = (fieldName: string, value: string) => {
-
+        setForm((prevState) => ({
+            ...prevState,
+            [fieldName]: value
+        }))
     }
 
-    const form = {
+
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const [form, setForm] = useState({
         image: '',
         title: '',
         description: '',
         liveSiteUrl: '',
         githubUrl: '',
-
-
-    }
-
+        category: '',
+    })
 
     return (
         <form
@@ -41,7 +71,7 @@ export const ProjectForm = ({ type, session }: Props) => {
             className='flexStart form'
         >
             <div className='flexStart form_image-container'>
-                <label html_Form="poster" className='flexCenter form_image-label'>
+                <label htmlFor="poster" className='flexCenter form_image-label'>
                     {!image && "Choose Your image"}
                 </label>
                 <input
@@ -52,6 +82,14 @@ export const ProjectForm = ({ type, session }: Props) => {
                     className='form_image-input'
                     onChange={handleChangeImage}
                 />
+
+                {form.image && (
+                    <Image
+                        src={form?.image}
+                        className="sm:p-10 object-contain z-20" alt="image"
+                        fill
+                    />
+                )}
             </div>
 
 
@@ -86,11 +124,25 @@ export const ProjectForm = ({ type, session }: Props) => {
             />
 
 
-
+            <CustomMenu
+                title="Category"
+                state={form.category}
+                setState={(value) => handleStateChange('category', value)}
+                filters={categoryFilters}
+            />
 
 
             <div className='flexStart w-full'>
-                <button> Create</button>
+               <Button
+               title={
+                isSubmitting 
+                    ? `${type === 'create' ? 'Creating' : 'Editing'}`
+                    :`${type === 'create' ? 'Create' : 'Edit'}`
+               }
+               type='submit'
+               leftIcon = {isSubmitting ? "" : '/plus.svg'}
+               isSubmitting={isSubmitting}
+/>
 
             </div>
 
