@@ -5,7 +5,8 @@ import { FormField } from './FormField'
 
 type Props = {
     type: string,
-    session: SessionInterface
+    session: SessionInterface,
+
 }
 
 export const ProjectForm = ({ type, session }: Props) => {
@@ -25,7 +26,12 @@ export const ProjectForm = ({ type, session }: Props) => {
 
     const form = {
         image: '',
-        title: ''
+        title: '',
+        description: '',
+        liveSiteUrl: '',
+        githubUrl: '',
+
+
     }
 
 
@@ -79,21 +85,14 @@ export const ProjectForm = ({ type, session }: Props) => {
                 setState={(value) => handleStateChange('githubUrl', value)}
             />
 
-            <FormField
-                type={"url"}
-                title="GitHub URL"
-                state={form.githubUrl}
-                placeholder="Github please..."
-                setState={(value) => handleStateChange('githubUrl', value)}
-            />
 
 
 
 
-<div className='flexStart w-full'>
-    <button> Create</button>
+            <div className='flexStart w-full'>
+                <button> Create</button>
 
-</div>
+            </div>
 
         </form>
     )
