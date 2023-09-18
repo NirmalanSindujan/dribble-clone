@@ -1,21 +1,23 @@
 'use client'
-import { SessionInterface } from '@/common.types'
+import { ProjectInterface, SessionInterface } from '@/common.types'
 import React, { ChangeEvent, useState } from 'react'
 import { FormField } from './FormField'
 import { categoryFilters } from '@/app/constants'
 import { CustomMenu } from './CustomMenu'
 import Image from 'next/image'
-import { Button } from './Button'
-import { createNewProject, fetchToken } from '@/lib/action'
+
+import { createNewProject, fetchToken, updateProject } from '@/lib/action'
 import { useRouter } from 'next/navigation'
+import Button from './Button'
 
 type Props = {
     type: string,
     session: SessionInterface,
+    project ?: ProjectInterface
 
 }
 
-export const ProjectForm = ({ type, session }: Props) => {
+export const ProjectForm = ({ type, session,project }: Props) => {
 
 
     const router = useRouter()
@@ -32,6 +34,13 @@ export const ProjectForm = ({ type, session }: Props) => {
 
                 router.push('/')
             }
+
+            if (type === "edit") {
+                await updateProject(form, project?.id as string, token)
+
+                router.push("/")
+            }
+
         }catch(err){
             console.log(err)
         }finally{
@@ -76,12 +85,12 @@ export const ProjectForm = ({ type, session }: Props) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [form, setForm] = useState({
-        image: '',
-        title: '',
-        description: '',
-        liveSiteUrl: '',
-        githubUrl: '',
-        category: '',
+        image: project?.image || '',
+        title: project?.title || '',
+        description: project?.description || '',
+        liveSiteUrl: project?.liveSiteUrl || '',
+        githubUrl: project?.githubUrl || '',
+        category: project?.category || '',
     })
 
     return (
@@ -160,7 +169,7 @@ export const ProjectForm = ({ type, session }: Props) => {
                }
                type='submit'
                leftIcon = {isSubmitting ? "" : '/plus.svg'}
-               isSubmitting={isSubmitting}
+               submitting={isSubmitting}
 />
 
             </div>
